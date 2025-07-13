@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taco Bell Order</title>
+    <!-- Link to global styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Taco Bell Ordering!</h1>
+        <p>Click the button below to start your delicious order.</p>
+        <button id="startButton" class="button">Click Here to Start</button>
+    </div>
+
+    <!-- Custom message box for alerts -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="messageButton">OK</button>
+    </div>
+
+    <!-- Import the core app.js for Firebase setup -->
+    <script type="module" src="app.js"></script>
+    <!-- Import page-specific JavaScript -->
+    <script type="module" src="index.js"></script>
+</body>
+</html>

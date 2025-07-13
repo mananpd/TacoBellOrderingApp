@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Your Name - Taco Bell Order</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>What's your name?</h1>
+        <input type="text" id="nameInput" class="input-field" placeholder="Enter your name here">
+        <button id="nextButton" class="button">Next</button>
+        <div id="loadingIndicator" class="loading-indicator">Saving name...</div>
+    </div>
+
+    <!-- Custom message box for alerts -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="messageButton">OK</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script type="module" src="name.js"></script>
+</body>
+</html>

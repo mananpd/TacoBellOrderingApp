@@ -1,0 +1,203 @@
+/* style.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fafc; /* Light gray background */
+    color: #2d3748; /* Dark text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+h1, h2 {
+    color: #e53e3e; /* Taco Bell red */
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #e53e3e; /* Taco Bell red */
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none; /* For anchor tags */
+    display: inline-block; /* For anchor tags */
+    margin-top: 20px;
+}
+
+.button:hover {
+    background-color: #c53030; /* Darker red on hover */
+    transform: translateY(-2px);
+}
+
+.input-field {
+    width: calc(100% - 24px); /* Account for padding */
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #cbd5e0; /* Light gray border */
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.checkbox-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #edf2f7;
+    border-radius: 8px;
+    background-color: #f7fafc;
+    transition: background-color 0.2s ease;
+}
+
+.checkbox-item:hover {
+    background-color: #ebf4ff;
+}
+
+.checkbox-item input[type="checkbox"] {
+    margin-right: 15px;
+    transform: scale(1.3); /* Make checkbox larger */
+}
+
+.checkbox-item label {
+    font-size: 1.1em;
+    color: #4a5568;
+    cursor: pointer;
+    flex-grow: 1;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.order-summary {
+    text-align: left;
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: #edf2f7;
+}
+
+.order-summary h3 {
+    color: #2d3748;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #cbd5e0;
+    padding-bottom: 10px;
+}
+
+.order-summary p {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.order-summary ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-summary ul li {
+    background-color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.order-summary ul li strong {
+    color: #e53e3e;
+}
+
+.loading-indicator {
+    display: none; /* Hidden by default */
+    margin-top: 20px;
+    font-weight: bold;
+    color: #e53e3e;
+}
+
+.message-box {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.message-box p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    color: #2d3748;
+}
+
+.message-box button {
+    background-color: #e53e3e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.message-box button:hover {
+    background-color: #c53030;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .button {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+
+    .input-field {
+        padding: 10px;
+        font-size: 0.95em;
+    }
+
+    h1, h2 {
+        font-size: 1.8em;
+    }
+}
+

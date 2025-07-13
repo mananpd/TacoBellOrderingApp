@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Your Order - Taco Bell</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Customize Your Items</h1>
+        <p>Adjust ingredients for your selected items.</p>
+
+        <div id="customizationContainer">
+            <!-- Customization options will be dynamically loaded here by customize.js -->
+        </div>
+
+        <button id="nextButton" class="button">Review Order</button>
+        <div id="loadingIndicator" class="loading-indicator">Saving customizations...</div>
+    </div>
+
+    <!-- Custom message box for alerts -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="messageButton">OK</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script type="module" src="customize.js"></script>
+</body>
+</html>

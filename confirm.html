@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Your Order - Taco Bell</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Confirm Your Order</h1>
+        <p>Please review your order before submitting.</p>
+
+        <div id="orderDetails" class="order-summary"> <!-- Changed ID from orderSummary to orderDetails -->
+            <h3>Your Order Details</h3>
+            <p><strong>Name:</strong> <span id="orderName"></span></p> <!-- Changed ID from userNameDisplay to orderName -->
+            <h4>Selected Items:</h4>
+            <ul id="selectedItemsList"></ul>
+            <p><strong>Total:</strong> $<span id="orderTotal">0.00</span></p> <!-- Added span for orderTotal -->
+        </div>
+
+        <button id="submitOrderButton" class="button">Submit Order</button>
+        <div id="loadingIndicator" class="loading-indicator">Submitting order...</div>
+        <div id="confirmationMessage" class="loading-indicator" style="color: green;"></div>
+    </div>
+
+    <!-- Custom message box for alerts -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="messageButton">OK</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script type="module" src="confirm.js"></script>
+</body>
+</html>
+

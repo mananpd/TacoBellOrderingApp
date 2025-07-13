@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taco Bell Order Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for the dashboard */
+        .dashboard-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left; /* Align text to left for readability */
+        }
+
+        .dashboard-container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .order-card {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            position: relative; /* Needed for absolute positioning of delete button */
+        }
+
+        .order-card h3 {
+            color: #e53e3e;
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #cbd5e0;
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-card h3 span {
+            font-size: 0.8em;
+            color: #718096;
+            font-weight: normal;
+        }
+
+        .order-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        .order-card ul li {
+            margin-bottom: 5px;
+            padding: 5px 0;
+            border-bottom: 1px dotted #edf2f7;
+        }
+
+        .order-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .order-card .status {
+            font-weight: bold;
+            color: #38a169; /* Green for submitted */
+            text-transform: capitalize;
+        }
+
+        .order-card .status.name_entered {
+            color: #ecc94b; /* Yellow for name entered */
+        }
+        .order-card .status.items_selected {
+            color: #ed8936; /* Orange for items selected */
+        }
+        .order-card .status.customized {
+            color: #4299e1; /* Blue for customized */
+        }
+
+        .filter-buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-buttons button {
+            margin: 0 5px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            background-color: #f0f4f8;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-buttons button:hover {
+            background-color: #e2e8f0;
+        }
+
+        .filter-buttons button.active {
+            background-color: #e53e3e;
+            color: white;
+            border-color: #e53e3e;
+        }
+
+        .delete-button {
+            background-color: #e53e3e; /* Red */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: absolute; /* Position button within the card */
+            top: 15px;
+            right: 15px;
+        }
+
+        .delete-button:hover {
+            background-color: #c53030; /* Darker red */
+        }
+
+        /* Responsive adjustments for dashboard */
+        @media (max-width: 600px) {
+            .dashboard-container {
+                padding: 20px;
+                border-radius: 10px;
+            }
+            .order-card {
+                padding: 15px;
+            }
+            .filter-buttons button {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+            .delete-button {
+                padding: 4px 8px;
+                font-size: 0.8em;
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Taco Bell Order Dashboard</h1>
+        <p>Your User ID: <strong id="userIdDisplay">Loading...</strong></p>
+        <div class="filter-buttons">
+            <button id="filterAll" class="active">All Orders</button>
+            <button id="filterSubmitted">Submitted</button>
+            <button id="filterInProgress">In Progress</button>
+        </div>
+        <div id="ordersList">
+            <p id="loadingOrders">Loading orders...</p>
+            <!-- Orders will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <!-- Custom message box for alerts -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="messageButton">OK</button>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script type="module" src="dashboard.js"></script>
+</body>
+</html>
+
