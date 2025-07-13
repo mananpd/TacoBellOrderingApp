@@ -5,20 +5,13 @@ import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gsta
 import { showMessageBox } from './app.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Removed login form elements
-    // const loginForm = document.getElementById('loginForm');
-    // const dashboardPasswordInput = document.getElementById('dashboardPassword');
-    // const loginButton = document.getElementById('loginButton');
-    // const loginError = document.getElementById('loginError');
-    const dashboardContent = document.getElementById('dashboardContent'); // Still need this to ensure it's visible
+    const dashboardContent = document.getElementById('dashboardContent');
 
     const ordersList = document.getElementById('ordersList');
     const loadingOrders = document.getElementById('loadingOrders');
     const filterAllBtn = document.getElementById('filterAll');
     const filterSubmittedBtn = document.getElementById('filterSubmitted');
     const filterInProgressBtn = document.getElementById('filterInProgress');
-
-    // Removed hardcoded password
 
     let currentAuth = null;
     let currentDb = null;
@@ -68,19 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Delete from public collection
             const publicOrderDocRef = doc(currentDb, `artifacts/${currentAppId}/public/data/orders`, orderIdToDelete);
             await deleteDoc(publicOrderDocRef);
-            console.log(`Order ${orderIdToDelete} deleted from public collection.`);
+            console.log(`DASHBOARD.JS: Order ${orderIdToDelete} deleted from public collection.`);
 
             // Also delete from the original user's private collection
             // This requires knowing the original userId of the order
             if (orderUserId) {
                 const privateOrderDocRef = doc(currentDb, `artifacts/${currentAppId}/users/${orderUserId}/orders`, orderIdToDelete);
                 await deleteDoc(privateOrderDocRef);
-                console.log(`Order ${orderIdToDelete} deleted from private collection of user ${orderUserId}.`);
+                console.log(`DASHBOARD.JS: Order ${orderIdToDelete} deleted from private collection of user ${orderUserId}.`);
             }
 
             showMessageBox(`Order ${orderIdToDelete} deleted successfully!`);
         } catch (error) {
-            console.error(`Error deleting order ${orderIdToDelete}:`, error);
+            console.error(`DASHBOARD.JS: Error deleting order ${orderIdToDelete}:`, error);
             if (error.code === 'permission-denied') {
                 showMessageBox("Permission denied: Check your Firestore Security Rules to allow delete operations for dashboard users.");
             } else {
@@ -94,16 +87,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupFirestoreListener = () => {
         if (unsubscribe) {
             unsubscribe(); // Unsubscribe from previous listener if exists
-            console.log("Dashboard: Unsubscribed from previous Firestore listener.");
+            console.log("DASHBOARD.JS: Unsubscribed from previous Firestore listener.");
         }
 
         if (!currentDb || !currentAppId) {
-            console.warn("Dashboard: Firestore or App ID not ready for listener setup. Skipping listener setup.");
+            console.warn("DASHBOARD.JS: Firestore or App ID not ready for listener setup. Skipping listener setup.");
             loadingOrders.textContent = "Error: Dashboard not fully initialized.";
             return;
         }
 
-        console.log(`Dashboard: Setting up Firestore listener for ALL public orders, app: ${currentAppId}, filter: ${currentFilter}`);
+        console.log(`DASHBOARD.JS: Setting up Firestore listener for ALL public orders, app: ${currentAppId}, filter: ${currentFilter}`);
 
         // Query the PUBLIC orders collection
         const ordersCollectionRef = collection(currentDb, `artifacts/${currentAppId}/public/data/orders`);
@@ -123,20 +116,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ordersList.innerHTML = ''; // Clear previous orders
 
         unsubscribe = onSnapshot(q, (snapshot) => {
-            console.log("Dashboard: Received Firestore snapshot. Number of documents:", snapshot.size);
+            console.log("DASHBOARD.JS: Received Firestore snapshot. Number of documents:", snapshot.size);
             loadingOrders.style.display = 'none'; // Hide loading once data starts coming
             ordersList.innerHTML = ''; // Clear existing orders before re-rendering
 
             if (snapshot.empty) {
                 ordersList.innerHTML = '<p>No orders found for this filter.</p>';
-                console.log("Dashboard: Snapshot is empty.");
+                console.log("DASHBOARD.JS: Snapshot is empty.");
                 return;
             }
 
             snapshot.forEach(doc => {
                 const order = doc.data();
                 const orderId = doc.id;
-                console.log(`Dashboard: Processing order ${orderId}:`, order);
+                console.log(`DASHBOARD.JS: Processing order ${orderId}:`, order);
 
                 const orderCard = document.createElement('div');
                 orderCard.className = 'order-card';
@@ -194,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         }, (error) => {
-            console.error("Dashboard: Error fetching orders:", error);
+            console.error("DASHBOARD.JS: Error fetching orders from Firestore:", error);
             loadingOrders.textContent = "Error loading orders. Check console for details.";
             if (error.code === 'permission-denied') {
                 showMessageBox("Permission denied: Check your Firestore Security Rules for read access to public orders.");
@@ -212,20 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
             currentAppId = window.__app_id;
             currentUserId = user.uid; // This user is the anonymous user for dashboard access
 
-            console.log("Dashboard: Firebase Auth ready. User ID:", currentUserId);
+            console.log("DASHBOARD.JS: Firebase Auth ready. User is signed in with UID:", currentUserId);
             // Directly set dashboard content to visible and setup listener
             dashboardContent.style.display = 'block';
             setupFirestoreListener();
         } else {
-            console.log("Dashboard: No user signed in. Attempting anonymous sign-in for dashboard access...");
+            console.log("DASHBOARD.JS: No user signed in. Attempting anonymous sign-in for dashboard access...");
             // Automatically sign in anonymously if not already signed in
             signInAnonymously(getAuth()).then(userCredential => {
                 currentUserId = userCredential.user.uid;
-                console.log("Dashboard: Signed in anonymously for dashboard access. UID:", currentUserId);
+                console.log("DASHBOARD.JS: Successfully signed in anonymously for dashboard access. UID:", currentUserId);
                 dashboardContent.style.display = 'block';
                 setupFirestoreListener();
             }).catch(error => {
-                console.error("Dashboard: Error signing in anonymously for dashboard:", error);
+                console.error("DASHBOARD.JS: Error signing in anonymously for dashboard:", error);
                 showMessageBox("Failed to authenticate for dashboard access. Please try again.");
                 loadingOrders.textContent = "Authentication failed. Please refresh.";
             });
@@ -257,3 +250,4 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFirestoreListener();
     });
 });
+

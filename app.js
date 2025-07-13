@@ -37,23 +37,23 @@ auth = getAuth(app);
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUserId = user.uid;
-        console.log("Firebase Auth State Changed: User is signed in with UID:", currentUserId);
+        console.log("APP.JS: Firebase Auth State Changed: User is signed in with UID:", currentUserId);
         // Dispatch a custom event to notify other scripts that auth is ready
         window.dispatchEvent(new CustomEvent('firebaseAuthReady', { detail: { userId: currentUserId } }));
     } else {
-        console.log("Firebase Auth State Changed: No user signed in. Attempting anonymous sign-in...");
+        console.log("APP.JS: Firebase Auth State Changed: No user signed in. Attempting anonymous sign-in...");
         try {
             // Check if there's an initial auth token from the Canvas environment
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 await signInWithCustomToken(auth, __initial_auth_token);
-                console.log("Signed in with custom token.");
+                console.log("APP.JS: Signed in with custom token.");
             } else {
                 // Sign in anonymously if no custom token (local dev or direct browser access)
                 await signInAnonymously(auth);
-                console.log("Signed in anonymously.");
+                console.log("APP.JS: Signed in anonymously.");
             }
         } catch (error) {
-            console.error("Error during authentication:", error);
+            console.error("APP.JS: Error during authentication:", error);
             showMessageBox("Authentication failed. Please try refreshing the page.");
         }
     }
@@ -81,7 +81,7 @@ export function showMessageBox(message, callback = null) {
         messageBox.style.display = 'block';
         messageBox._callback = callback; // Store callback
     } else {
-        console.warn("Message box elements not found. Falling back to console log:", message);
+        console.warn("APP.JS: Message box elements not found. Falling back to console log:", message);
         // Fallback for environments where messageBox might not be present (e.g., pure backend tests)
         alert(message);
     }
@@ -123,7 +123,7 @@ export async function saveUserName(userName) {
         orderId = doc(collection(db, `artifacts/${appId}/users/${currentUserId}/orders`)).id;
         sessionStorage.setItem('tacoBellOrderId', orderId);
         currentOrderId = orderId;
-        console.log("Generated new order ID:", orderId);
+        console.log("APP.JS: Generated new order ID:", orderId);
     }
 
     const orderData = {
@@ -136,15 +136,15 @@ export async function saveUserName(userName) {
     try {
         // Save to private collection
         await setDoc(getOrderDocRef(orderId), orderData, { merge: true });
-        console.log("User name saved to private order:", orderId);
+        console.log("APP.JS: User name saved to private order:", orderId);
 
         // Save to public collection
         await setDoc(getPublicOrderDocRef(orderId), orderData, { merge: true });
-        console.log("User name saved to public order:", orderId);
+        console.log("APP.JS: User name saved to PUBLIC order:", orderId);
 
         return orderId;
     } catch (e) {
-        console.error("Error saving user name:", e);
+        console.error("APP.JS: Error saving user name to Firestore:", e);
         showMessageBox(`Failed to save your name: ${e.message}`);
         return null;
     }
@@ -164,15 +164,15 @@ export async function saveSelectedItems(items) {
     try {
         // Update private collection
         await updateDoc(getOrderDocRef(getOrderId()), orderData);
-        console.log("Selected items saved to private order:", getOrderId());
+        console.log("APP.JS: Selected items saved to private order:", getOrderId());
 
         // Update public collection
         await updateDoc(getPublicOrderDocRef(getOrderId()), orderData);
-        console.log("Selected items saved to public order:", getOrderId());
+        console.log("APP.JS: Selected items saved to PUBLIC order:", getOrderId());
 
         return true;
     } catch (e) {
-        console.error("Error saving selected items:", e);
+        console.error("APP.JS: Error saving selected items to Firestore:", e);
         showMessageBox(`Failed to save your selections: ${e.message}`);
         return false;
     }
@@ -192,15 +192,15 @@ export async function saveCustomizations(customizations) {
     try {
         // Update private collection
         await updateDoc(getOrderDocRef(getOrderId()), orderData);
-        console.log("Customizations saved to private order:", getOrderId());
+        console.log("APP.JS: Customizations saved to private order:", getOrderId());
 
         // Update public collection
         await updateDoc(getPublicOrderDocRef(getOrderId()), orderData);
-        console.log("Customizations saved to public order:", getOrderId());
+        console.log("APP.JS: Customizations saved to PUBLIC order:", getOrderId());
 
         return true;
     } catch (e) {
-        console.error("Error saving customizations:", e);
+        console.error("APP.JS: Error saving customizations to Firestore:", e);
         showMessageBox(`Failed to save your customizations: ${e.message}`);
         return false;
     }
@@ -220,15 +220,15 @@ export async function submitOrder() {
     try {
         // Update private collection
         await updateDoc(getOrderDocRef(getOrderId()), orderData);
-        console.log("Order submitted in private collection:", getOrderId());
+        console.log("APP.JS: Order submitted in private collection:", getOrderId());
 
         // Update public collection
         await updateDoc(getPublicOrderDocRef(getOrderId()), orderData);
-        console.log("Order submitted in public collection:", getOrderId());
+        console.log("APP.JS: Order submitted in PUBLIC collection:", getOrderId());
 
         return true;
     } catch (e) {
-        console.error("Error submitting order:", e);
+        console.error("APP.JS: Error submitting order to Firestore:", e);
         showMessageBox(`Failed to submit order: ${e.message}`);
         return false;
     }
@@ -236,7 +236,7 @@ export async function submitOrder() {
 
 export async function getOrderDetails() {
     if (!currentUserId || !getOrderId()) {
-        console.warn("Cannot get order details: User not authenticated or no order ID.");
+        console.warn("APP.JS: Cannot get order details: User not authenticated or no order ID.");
         return null;
     }
     try {
@@ -244,12 +244,13 @@ export async function getOrderDetails() {
         if (orderDoc.exists()) {
             return orderDoc.data();
         } else {
-            console.warn("No such order document exists:", getOrderId());
+            console.warn("APP.JS: No such order document exists:", getOrderId());
             return null;
         }
     } catch (e) {
-        console.error("Error getting order details:", e);
+        console.error("APP.JS: Error getting order details from Firestore:", e);
         showMessageBox(`Failed to load order details: ${e.message}`);
         return null;
     }
 }
+
