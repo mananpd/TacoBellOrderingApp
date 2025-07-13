@@ -26,6 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const userName = userNameInput.value.trim();
 
         if (userName) {
+            // --- New: Check for "Brayden" in the name (case-insensitive) ---
+            if (userName.toLowerCase().includes('bray')) {
+                showMessageBox("only adults can place orders :)");
+                return; // Stop the process here if "Brayden" is found
+            }
+            // --- End New Check ---
+
             loadingIndicator.textContent = "Saving name...";
             loadingIndicator.style.display = 'block';
             nextButton.disabled = true; // Disable button to prevent multiple clicks
@@ -55,4 +62,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 
