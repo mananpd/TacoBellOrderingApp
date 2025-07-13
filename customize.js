@@ -7,34 +7,25 @@ const commonIngredients = [
     { id: 'lettuce', name: 'Lettuce' },
     { id: 'cheese', name: 'Cheddar Cheese' },
     { id: 'sour_cream', name: 'Sour Cream' },
-    { id: 'tomato', name: 'Diced Tomatoes' },
-    { id: 'beans', name: 'Refried Beans' },
-    { id: 'rice', name: 'Seasoned Rice' },
+    { id: 'salsa', name: 'Salsa' },
+    { id: 'beans', name: 'Black Beans' },
     { id: 'jalapenos', name: 'Jalapeños' },
-    { id: 'onions', name: 'Onions' },
-    { id: 'guacamole', name: 'Guacamole' },
-    { id: 'pico_de_gallo', name: 'Pico de Gallo' },
     { id: 'beef', name: 'Seasoned Beef' }, // Added for removal/substitution
     { id: 'chicken', name: 'Chicken' },    // Added for removal/substitution
-    { id: 'steak', name: 'Steak' },        // Added for removal/substitution
-    { id: 'nacho_cheese_sauce', name: 'Nacho Cheese Sauce' },
-    { id: 'red_strips', name: 'Red Strips' }, // Example for Crunchwrap
-    { id: 'tostada_shell', name: 'Tostada Shell' } // Example for Crunchwrap
 ];
 
 // A simplified mapping of ingredients typically found in items for 'removal' suggestions
 // This is a basic example; a real app would have more detailed item compositions.
 const defaultIngredientsPerItem = {
-    'crunchy_taco': ['beef', 'lettuce', 'cheese'],
+    'cheesy_gordita_crunch': ['beef', 'lettuce', 'cheese'],
     'soft_taco': ['beef', 'lettuce', 'cheese'],
-    'burrito_supreme': ['beef', 'beans', 'rice', 'sour_cream', 'onions'],
-    'quesadilla': ['chicken', 'cheese', 'jalapenos'], // Assuming chicken quesadilla
-    'nacho_fries': ['fries', 'nacho_cheese_sauce', 'beef', 'sour_cream', 'tomato'],
-    'cinnamon_twists': [], // No ingredients to remove/add
-    'chalupa_supreme': ['beef', 'lettuce', 'cheese', 'sour_cream', 'tomato'],
-    'crunchwrap_supreme': ['beef', 'nacho_cheese_sauce', 'tostada_shell', 'sour_cream', 'lettuce', 'tomato']
+    'mexican_pizza': ['beef', 'beans', 'rice', 'salsa'],
+    'chicken_quesadilla': ['chicken', 'cheese'], // Assuming chicken quesadilla
+    'catina_chicken_taco': ['chicken', 'cheese', 'lettuce', 'salsa'],
+    'cantina_chicken_burrito': ['chicken', 'cheese', 'lettuce', 'salsa'],
+    'bean_burrito': ['beans', 'cheese', 'salsa'],
+    'crunchwrap_supreme': ['beef', 'cheese', 'tostada_shell', 'sour_cream', 'lettuce', 'salsa']
 };
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const customizationContainer = document.getElementById('customizationContainer');
