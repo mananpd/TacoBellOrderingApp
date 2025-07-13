@@ -57,32 +57,42 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        let publicDeleteSuccess = false;
+        let privateDeleteSuccess = false;
+
         try {
-            // Delete from public collection
+            // Attempt to delete from public collection first
             const publicOrderDocRef = doc(currentDb, `artifacts/${currentAppId}/public/data/orders`, orderIdToDelete);
             await deleteDoc(publicOrderDocRef);
             console.log(`DASHBOARD.JS: Order ${orderIdToDelete} deleted from public collection.`);
+            publicDeleteSuccess = true;
+        } catch (error) {
+            console.error(`DASHBOARD.JS: Error deleting order ${orderIdToDelete} from public collection:`, error);
+            showMessageBox(`Failed to delete public order: ${error.message}`);
+            return; // Stop here if public deletion fails, as it's critical
+        }
 
-            // Also delete from the original user's private collection
-            // This requires knowing the original userId of the order
-            if (orderUserId) {
+        // Attempt to delete from the original user's private collection
+        // This is now in a separate try-catch so its failure doesn't block the public success message
+        if (orderUserId) {
+            try {
                 const privateOrderDocRef = doc(currentDb, `artifacts/${currentAppId}/users/${orderUserId}/orders`, orderIdToDelete);
                 await deleteDoc(privateOrderDocRef);
                 console.log(`DASHBOARD.JS: Order ${orderIdToDelete} deleted from private collection of user ${orderUserId}.`);
+                privateDeleteSuccess = true;
+            } catch (error) {
+                console.warn(`DASHBOARD.JS: Warning: Failed to delete order ${orderIdToDelete} from private collection of user ${orderUserId}:`, error);
+                // We don't show a message box for private deletion failure here,
+                // as the public deletion is the primary concern for the dashboard.
+                // The warning in console is sufficient for debugging.
             }
+        } else {
+            console.warn(`DASHBOARD.JS: No userId found for order ${orderIdToDelete}. Skipping private collection deletion.`);
+        }
 
-            // If both deletions (or just public if private doesn't exist) succeed, show success message
+        // If public deletion was successful, show success message
+        if (publicDeleteSuccess) {
             showMessageBox(`Order ${orderIdToDelete} deleted successfully!`);
-
-        } catch (error) {
-            console.error(`DASHBOARD.JS: Error deleting order ${orderIdToDelete}:`, error);
-            // Only show permission denied if the error code explicitly indicates it
-            if (error.code === 'permission-denied') {
-                showMessageBox("Permission denied: Check your Firestore Security Rules to allow delete operations for dashboard users.");
-            } else {
-                // For any other error, show a generic failure message
-                showMessageBox(`Failed to delete order: ${error.message}`);
-            }
         }
     };
 
@@ -254,5 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFirestoreListener();
     });
 });
+
 
 
