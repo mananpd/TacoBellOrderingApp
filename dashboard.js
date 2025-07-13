@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 import { showMessageBox } from './app.js'; // Assuming app.js initializes Firebase and exports showMessageBox
 
 document.addEventListener('DOMContentLoaded', () => {
-    const userIdDisplay = document.getElementById('userIdDisplay');
+    // Removed: const userIdDisplay = document.getElementById('userIdDisplay');
     const ordersList = document.getElementById('ordersList');
     const loadingOrders = document.getElementById('loadingOrders');
     const filterAllBtn = document.getElementById('filterAll');
@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'chicken': 'Chicken',
         'steak': 'Steak',
         'nacho_cheese_sauce': 'Nacho Cheese Sauce',
-        'red_strips': 'Red Strips'
+        'red_strips': 'Red Strips',
+        'tostada_shell': 'Tostada Shell'
     };
 
     // Function to delete an order from Firestore
@@ -89,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        userIdDisplay.textContent = currentUserId; // Display the user ID
         console.log(`Dashboard: Setting up Firestore listener for user: ${currentUserId}, app: ${currentAppId}, filter: ${currentFilter}`);
 
         const ordersCollectionRef = collection(currentDb, `artifacts/${currentAppId}/users/${currentUserId}/orders`);
@@ -126,8 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const orderCard = document.createElement('div');
                 orderCard.className = 'order-card';
+                // Removed the span displaying order.userId
                 orderCard.innerHTML = `
-                    <h3>Order ID: ${orderId} <span>(User: ${order.userId})</span></h3>
+                    <h3>Order ID: ${orderId}</h3>
                     <button class="delete-button" data-order-id="${orderId}">Delete</button>
                     <p><strong>Customer Name:</strong> ${order.userName || 'N/A'}</p>
                     <p><strong>Status:</strong> <span class="status ${order.status}">${order.status ? order.status.replace(/_/g, ' ') : 'N/A'}</span></p>
@@ -201,12 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setupFirestoreListener(); // Setup listener once authenticated
         } else {
             console.log("Dashboard: No user signed in. Waiting for authentication.");
-            userIdDisplay.textContent = "Not authenticated";
             loadingOrders.textContent = "Waiting for user authentication...";
-            // showMessageBox("Please ensure Firebase is initialized and you are authenticated to view the dashboard.", () => {
-            //     // Optionally redirect to index.html if not authenticated after a delay
-            //     // window.location.href = 'index.html';
-            // });
         }
     });
 
@@ -235,5 +231,4 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFirestoreListener();
     });
 });
-
 

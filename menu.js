@@ -2,16 +2,16 @@
 
 import { saveSelectedItems, getOrderDetails, getUserId, getOrderId, showMessageBox } from './app.js';
 
-// Define your menu items (price property is intentionally absent)
+// Define your menu items. Added 'restricted: true' for Mexican Pizza and Chicken Quesadilla.
 const menuItems = [
-    { id: 'crunchy_taco', name: 'Crunchy Taco', image: 'https://placehold.co/150x150/FFCC00/000000?text=Taco' },
-    { id: 'soft_taco', name: 'Soft Taco', image: 'https://placehold.co/150x150/FFCC00/000000?text=Soft+Taco' },
-    { id: 'burrito_supreme', name: 'Burrito Supreme', image: 'https://placehold.co/150x150/FFCC00/000000?text=Burrito' },
-    { id: 'quesadilla', name: 'Quesadilla', image: 'https://placehold.co/150x150/FFCC00/000000?text=Quesadilla' },
-    { id: 'nacho_fries', name: 'Nacho Fries', image: 'https://placehold.co/150x150/FFCC00/000000?text=Fries' },
-    { id: 'cinnamon_twists', name: 'Cinnamon Twists', image: 'https://placehold.co/150x150/FFCC00/000000?text=Twists' },
-    { id: 'chalupa_supreme', name: 'Chalupa Supreme', image: 'https://placehold.co/150x150/FFCC00/000000?text=Chalupa' },
-    { id: 'crunchwrap_supreme', name: 'Crunchwrap Supreme', image: 'https://placehold.co/150x150/FFCC00/000000?text=Crunchwrap' }
+    { id: 'crunchwrap_supreme', name: 'Crunchwrap Supreme', image: 'Images/Crunchwrap2.png' },
+    { id: 'cheesy_gordita_crunch', name: 'Cheesy Gordita Crunch', image: 'Images/Cheesy.png' },
+    { id: 'cantina_chicken_burrito', name: 'Catina Chicken Burrito ', image: 'Images/CatinaBur.png' },
+    { id: 'bean_burrito', name: 'Bean Burrito', image: 'Images/BeanBurrito.png' },
+    { id: 'catina_chicken_taco', name: 'Catina Chicken Taco', image: 'Images/CatinaTaco.png' },
+    { id: 'soft_taco', name: 'Soft Taco', image: 'Images/softTaco.png' },
+    { id: 'chicken_quesadilla', name: 'Chicken Quesadilla', image: 'Images/quesadilla.png', restricted: true }, // Restricted item
+    { id: 'mexican_pizza', name: 'Mexican Pizza', image: 'Images/mexicanPizza.png', restricted: true }, // Restricted item
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,11 +21,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const startOverButton = document.getElementById('startOverButton');
     const loadingIndicator = document.getElementById('loadingIndicator');
 
+    // Restricted Item Modal Elements (reusing the Mexican Pizza modal)
+    const restrictedItemModalOverlay = document.getElementById('mexicanPizzaModalOverlay'); // Reusing ID
+    const restrictedItemModalTitle = document.getElementById('mexicanPizzaModalTitle');     // Reusing ID
+    const restrictedItemModalMessage = document.getElementById('mexicanPizzaModalMessage'); // Reusing ID
+    const goBackToMenuButton = document.getElementById('goBackToMenuButton');
+
+
     // selectedItems will now store objects with { id, name, quantity }
     let selectedItems = [];
 
-    if (!menuItemsContainer || !nextButton || !backButton || !startOverButton || !loadingIndicator) {
-        console.error("Required elements not found on menu.html.");
+    if (!menuItemsContainer || !nextButton || !backButton || !startOverButton || !loadingIndicator ||
+        !restrictedItemModalOverlay || !restrictedItemModalTitle || !restrictedItemModalMessage ||
+        !goBackToMenuButton) {
+        console.error("Required elements not found on menu.html. Please check HTML IDs.");
         showMessageBox("An error occurred loading the menu page. Please try again.");
         return;
     }
@@ -84,15 +93,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Function to update quantity and selectedItems array
             const updateQuantity = (change) => {
+                const id = menuItemDiv.dataset.itemId;
+                const name = menuItemDiv.dataset.itemName;
+                const currentItem = menuItems.find(menuItem => menuItem.id === id); // Get the full item object
+
+                console.log(`updateQuantity called for ${id} with change ${change}`); // Debug log
+
+                // Special handling for restricted items: prevent quantity increase
+                if (currentItem && currentItem.restricted && change > 0) {
+                    handleRestrictedItemSelection(id, name); // Show the warning modal
+                    // Do not update quantity or add to selectedItems for restricted items
+                    return;
+                }
+
                 let currentQty = parseInt(quantityInput.value);
                 let newQty = currentQty + change;
 
                 if (newQty < 0) newQty = 0; // Prevent negative quantity
 
                 quantityInput.value = newQty;
-
-                const id = menuItemDiv.dataset.itemId;
-                const name = menuItemDiv.dataset.itemName;
 
                 const existingIndex = selectedItems.findIndex(sItem => sItem.id === id);
 
@@ -123,16 +142,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateQuantity(1);
             });
 
-            // Prevent item card click from toggling 'selected' class if quantity controls are clicked
-            // The main menu-item click listener will now only toggle if quantity is not being directly manipulated
+            // Main item card click listener
             menuItemDiv.addEventListener('click', (event) => {
-                // If a quantity button or input was clicked, don't toggle the selected class
+                // If a quantity button or input was clicked, don't trigger this
                 if (event.target.classList.contains('decrease-quantity') ||
                     event.target.classList.contains('increase-quantity') ||
                     event.target.classList.contains('item-quantity')) {
                     return;
                 }
-                // If the card itself is clicked, toggle quantity between 0 and 1
+
+                // Special handling for restricted items
+                const currentItem = menuItems.find(menuItem => menuItem.id === item.id);
+                if (currentItem && currentItem.restricted) {
+                    handleRestrictedItemSelection(item.id, item.name);
+                    return; // Stop further processing for restricted items
+                }
+
+                // Normal logic for other items: toggle quantity between 0 and 1
                 if (parseInt(quantityInput.value) === 0) {
                     updateQuantity(1); // Set to 1 if currently 0
                 } else {
@@ -142,6 +168,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         loadingIndicator.style.display = 'none';
     };
+
+    // Generic function to handle restricted item selection
+    const handleRestrictedItemSelection = (itemId, itemName) => {
+        restrictedItemModalOverlay.style.display = 'flex'; // Show the modal
+        restrictedItemModalTitle.textContent = `Are you sure about the ${itemName}?`;
+        restrictedItemModalMessage.textContent = `You sure you want this item? We really think you should select something else.`;
+        
+        // Ensure the restricted item is NOT selected (quantity remains 0) and update UI
+        const restrictedItemInput = document.querySelector(`.item-quantity[data-item-id="${itemId}"]`);
+        if (restrictedItemInput) {
+            // Remove item from selectedItems if it was somehow added
+            const index = selectedItems.findIndex(item => item.id === itemId);
+            if (index !== -1) {
+                selectedItems.splice(index, 1);
+            }
+            restrictedItemInput.value = 0; // Reset quantity display
+            const restrictedItemDiv = document.querySelector(`.menu-item[data-item-id="${itemId}"]`);
+            if (restrictedItemDiv) {
+                restrictedItemDiv.classList.remove('selected');
+            }
+            console.log(`${itemName} quantity reset to 0 and removed from selectedItems.`); // Debug log
+        }
+
+        // Remove previous listeners to prevent multiple triggers
+        const oldGoBackButton = goBackToMenuButton;
+        const newGoBackButton = oldGoBackButton.cloneNode(true);
+        oldGoBackButton.parentNode.replaceChild(newGoBackButton, oldGoBackButton);
+
+        newGoBackButton.addEventListener('click', () => {
+            restrictedItemModalOverlay.style.display = 'none'; // Hide the modal
+            console.log(`${itemName} not selected. Current selected items:`, selectedItems);
+        });
+    };
+
 
     // Wait for Firebase authentication to be ready before trying to load menu items
     window.addEventListener('firebaseAuthReady', (event) => {

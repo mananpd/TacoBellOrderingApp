@@ -197,6 +197,62 @@
             background-color: #553c9a;
         }
 
+        /* Modal specific styles */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            z-index: 1000; /* Above all other content */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            color: #2d3748; /* Dark text for modal content */
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-content h4 {
+            color: #e53e3e;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-buttons .button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin-top: 0; /* Override general button margin */
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .container {
@@ -230,6 +286,20 @@
             .button-group {
                 flex-direction: column; /* Stack buttons vertically on small screens */
                 gap: 10px;
+            }
+            .modal-content {
+                padding: 20px;
+                border-radius: 10px;
+            }
+            .modal-content h4 {
+                font-size: 1.5em;
+            }
+            .modal-content p {
+                font-size: 1em;
+            }
+            .modal-buttons .button {
+                font-size: 0.9em;
+                padding: 8px 15px;
             }
         }
         @media (max-width: 480px) {
@@ -288,7 +358,19 @@
         <button id="messageButton">OK</button>
     </div>
 
+    <!-- Mexican Pizza Custom Modal -->
+    <div id="mexicanPizzaModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <h4 id="mexicanPizzaModalTitle">Are you sure about that?</h4>
+            <p id="mexicanPizzaModalMessage">You sure you want this item? We really think you should select something else.</p>
+            <div class="modal-buttons">
+                <button id="goBackToMenuButton" class="button">Go Back to Menu Options</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="app.js"></script>
     <script type="module" src="menu.js"></script>
 </body>
 </html>
+
