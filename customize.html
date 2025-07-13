@@ -5,17 +5,265 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customize Your Order - Taco Bell</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for the enhanced customization page */
+        body {
+            /* Background image for the customization page */
+            background-image: url('Images/background.jpg'); /* Placeholder gold/purple background */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top to allow scrolling */
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff; /* White text for better contrast on background */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent dark background */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out forwards;
+            border: 2px solid #ffcc00; /* Taco Bell gold border */
+            margin-top: 20px; /* Add some top margin to avoid sticking to top on scroll */
+            margin-bottom: 20px; /* Add some bottom margin */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #e53e3e; /* Taco Bell red */
+            margin-bottom: 15px;
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .container > p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            color: #e2e8f0; /* Lighter text for contrast */
+        }
+
+        .item-customization-card {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background for card */
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            color: #2d3748; /* Darker text inside card for readability */
+        }
+
+        .item-customization-card h3 {
+            color: #e53e3e; /* Taco Bell red for item name */
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #cbd5e0;
+            padding-bottom: 10px;
+            font-size: 1.6em;
+            text-align: center;
+        }
+
+        .customization-section {
+            margin-top: 20px; /* Space between sections */
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px dashed #cbd5e0;
+            border-radius: 8px;
+            background-color: #f7fafc; /* Light background for sections */
+        }
+
+        .customization-section h4 {
+            color: #6b46c1; /* Purple for section headings */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            background-color: #edf2f7;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #d1d9e6;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            background-color: #e2e8f0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: #e53e3e; /* Highlight checkbox with brand color */
+            transform: scale(1.2); /* Slightly larger checkbox */
+        }
+
+        .checkbox-item label {
+            font-size: 1em;
+            color: #4a5568;
+            cursor: pointer;
+        }
+
+        .button-group { /* New button group container */
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* More space between buttons */
+            margin-top: 30px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .button {
+            background-color: #e53e3e;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            min-width: 150px;
+        }
+
+        .button:hover {
+            background-color: #c53030;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .button.secondary {
+            background-color: #6b46c1; /* Purple tone for secondary actions */
+        }
+
+        .button.secondary:hover {
+            background-color: #553c9a;
+        }
+
+        .loading-indicator {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #e53e3e;
+            font-weight: bold;
+            text-shadow: none; /* Remove text shadow for loading indicator */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                border-radius: 10px;
+            }
+            h1 {
+                font-size: 2.2em;
+            }
+            .container > p {
+                font-size: 1em;
+            }
+            .item-customization-card {
+                padding: 15px;
+            }
+            .item-customization-card h3 {
+                font-size: 1.4em;
+            }
+            .customization-section {
+                padding: 10px;
+            }
+            .customization-section h4 {
+                font-size: 1.1em;
+            }
+            .checkbox-group {
+                gap: 10px;
+            }
+            .checkbox-item {
+                padding: 6px 10px;
+            }
+            .checkbox-item label {
+                font-size: 0.9em;
+            }
+            .button {
+                padding: 12px 25px;
+                font-size: 1.1em;
+                min-width: unset;
+            }
+            .button-group {
+                flex-direction: column; /* Stack buttons vertically on small screens */
+                gap: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .item-customization-card {
+                padding: 10px;
+            }
+            .item-customization-card h3 {
+                font-size: 1.2em;
+            }
+            .customization-section h4 {
+                font-size: 1em;
+            }
+            .checkbox-group {
+                flex-direction: column; /* Stack checkboxes on very small screens */
+                align-items: flex-start;
+            }
+            .checkbox-item {
+                width: 100%; /* Full width for stacked checkboxes */
+                box-sizing: border-box;
+            }
+            .button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Customize Your Items</h1>
-        <p>Adjust ingredients for your selected items.</p>
+        <h1>Customize Your Order</h1>
+        <p>Tailor each item to your liking. Remove ingredients you don't want, or add some extra flavor!</p>
 
         <div id="customizationContainer">
-            <!-- Customization options will be dynamically loaded here by customize.js -->
+            <!-- Item customization cards will be dynamically loaded here by customize.js -->
         </div>
 
-        <button id="nextButton" class="button">Review Order</button>
+        <div class="button-group">
+            <button id="backButton" class="button secondary">Back</button>
+            <button id="nextButton" class="button">Review Order</button>
+            <button id="startOverButton" class="button secondary">Start Over</button>
+        </div>
         <div id="loadingIndicator" class="loading-indicator">Saving customizations...</div>
     </div>
 

@@ -3,48 +3,56 @@
 import { saveUserName, showMessageBox } from './app.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const nameInput = document.getElementById('nameInput');
+    const userNameInput = document.getElementById('userName');
     const nextButton = document.getElementById('nextButton');
     const loadingIndicator = document.getElementById('loadingIndicator');
 
-    if (!nameInput || !nextButton || !loadingIndicator) {
-        console.error("Required elements not found on name.html.");
-        showMessageBox("An error occurred loading the page. Please try again.");
-        return;
+    // Log to confirm elements are found
+    console.log("name.js: userNameInput found?", !!userNameInput);
+    console.log("name.js: nextButton found?", !!nextButton);
+    console.log("name.js: loadingIndicator found?", !!loadingIndicator);
+
+    // Check if all required elements are present
+    if (!userNameInput || !nextButton || !loadingIndicator) {
+        console.error("name.js: One or more required elements not found on name.html.");
+        showMessageBox("An error occurred loading the name entry page. Please ensure all elements are present.");
+        return; // Stop execution if elements are missing
     }
 
-    // Wait for Firebase authentication to be ready before enabling the button
-    window.addEventListener('firebaseAuthReady', (event) => {
-        if (event.detail.userId) {
-            nextButton.disabled = false; // Enable button once authenticated
-            console.log("Firebase auth ready for name page.");
+    // Initially hide the loading indicator
+    loadingIndicator.style.display = 'none';
+
+    nextButton.addEventListener('click', async () => {
+        const userName = userNameInput.value.trim();
+
+        if (userName) {
+            loadingIndicator.textContent = "Saving name...";
+            loadingIndicator.style.display = 'block';
+            nextButton.disabled = true; // Disable button to prevent multiple clicks
+
+            const orderId = await saveUserName(userName);
+
+            loadingIndicator.style.display = 'none'; // Hide loading after save attempt
+
+            if (orderId) {
+                console.log("name.js: Name saved, navigating to menu.html with Order ID:", orderId);
+                window.location.href = 'menu.html';
+            } else {
+                // Error message is handled by saveUserName (via showMessageBox)
+                console.error("name.js: Failed to save user name or get order ID.");
+                nextButton.disabled = false; // Re-enable button on failure
+            }
         } else {
-            nextButton.disabled = true; // Keep disabled if no user
-            showMessageBox("Authentication failed. Please refresh the page.");
+            showMessageBox("Please enter your name to proceed.");
         }
     });
 
-    nextButton.addEventListener('click', async () => {
-        const userName = nameInput.value.trim();
-
-        if (userName === '') {
-            showMessageBox('Please enter your name to continue.');
-            return;
-        }
-
-        loadingIndicator.style.display = 'block'; // Show loading indicator
-        nextButton.disabled = true; // Disable button during save
-
-        const orderId = await saveUserName(userName);
-
-        loadingIndicator.style.display = 'none'; // Hide loading indicator
-
-        if (orderId) {
-            // Successfully saved name and created order, proceed to menu page
-            window.location.href = 'menu.html';
-        } else {
-            // Error message already handled by saveUserName via showMessageBox
-            nextButton.disabled = false; // Re-enable button if save failed
+    // Optional: Allow pressing Enter to submit
+    userNameInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission
+            nextButton.click(); // Simulate button click
         }
     });
 });
+

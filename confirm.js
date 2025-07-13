@@ -5,9 +5,11 @@ import { getOrderDetails, submitOrder, getUserId, getOrderId, showMessageBox } f
 document.addEventListener('DOMContentLoaded', () => {
     const orderDetailsContainer = document.getElementById('orderDetails');
     const submitOrderButton = document.getElementById('submitOrderButton');
+    const backButton = document.getElementById('backButton'); // New back button
+    const startOverButton = document.getElementById('startOverButton'); // New start over button
     const loadingIndicator = document.getElementById('loadingIndicator');
 
-    if (!orderDetailsContainer || !submitOrderButton || !loadingIndicator) {
+    if (!orderDetailsContainer || !submitOrderButton || !backButton || !startOverButton || !loadingIndicator) {
         console.error("Required elements not found on confirm.html.");
         showMessageBox("An error occurred loading the page. Please try again.");
         return;
@@ -53,17 +55,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedItemsList = document.getElementById('selectedItemsList');
         selectedItemsList.innerHTML = ''; // Clear previous content
 
+        // Helper map for ingredient names (should be consistent with customize.js)
+        const commonIngredientsMap = {
+            'lettuce': 'Lettuce',
+            'cheese': 'Cheddar Cheese',
+            'sour_cream': 'Sour Cream',
+            'tomato': 'Diced Tomatoes',
+            'beans': 'Refried Beans',
+            'rice': 'Seasoned Rice',
+            'jalapenos': 'Jalapeños',
+            'onions': 'Onions',
+            'guacamole': 'Guacamole',
+            'pico_de_gallo': 'Pico de Gallo',
+            'beef': 'Seasoned Beef',
+            'chicken': 'Chicken',
+            'steak': 'Steak',
+            'nacho_cheese_sauce': 'Nacho Cheese Sauce',
+            'red_strips': 'Red Strips'
+        };
+
+
         if (order.selectedItems && order.selectedItems.length > 0) {
             order.selectedItems.forEach(item => {
                 const li = document.createElement('li');
-                li.innerHTML = `<strong>${item.name}</strong> ($${item.price.toFixed(2)})`;
+                li.innerHTML = `<strong>${item.name}</strong> (Qty: ${item.quantity || 1})`; // Display quantity
 
                 // Add customizations if they exist for this item
-                if (order.customizations && order.customizations[item.id] && order.customizations[item.id].length > 0) {
-                    const customizationsDiv = document.createElement('div');
-                    customizationsDiv.className = 'customization-details';
-                    customizationsDiv.innerHTML = `&nbsp;&nbsp;&nbsp;Custom: ${order.customizations[item.id].join(', ')}`;
-                    li.appendChild(customizationsDiv);
+                if (order.customizations && order.customizations[item.id]) {
+                    const itemCustoms = order.customizations[item.id];
+                    
+                    if (itemCustoms.removed && itemCustoms.removed.length > 0) {
+                        const removedDiv = document.createElement('div');
+                        removedDiv.className = 'customization-details';
+                        const removedNames = itemCustoms.removed.map(id => commonIngredientsMap[id] || id);
+                        removedDiv.innerHTML = `&nbsp;&nbsp;&nbsp;Removed: ${removedNames.join(', ')}`;
+                        li.appendChild(removedDiv);
+                    }
+                    if (itemCustoms.added && itemCustoms.added.length > 0) {
+                        const addedDiv = document.createElement('div');
+                        addedDiv.className = 'customization-details';
+                        const addedNames = itemCustoms.added.map(id => commonIngredientsMap[id] || id);
+                        addedDiv.innerHTML = `&nbsp;&nbsp;&nbsp;Added: ${addedNames.join(', ')}`;
+                        li.appendChild(addedDiv);
+                    }
                 }
                 selectedItemsList.appendChild(li);
             });
@@ -73,12 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedItemsList.appendChild(li);
         }
 
-        // Calculate and display total
-        let total = 0;
-        if (order.selectedItems) {
-            total = order.selectedItems.reduce((sum, item) => sum + item.price, 0);
-        }
-        document.getElementById('orderTotal').textContent = total.toFixed(2);
+        // Removed total calculation and display
     };
 
     // Wait for Firebase authentication to be ready before trying to load order details
@@ -101,26 +130,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     submitOrderButton.addEventListener('click', async () => {
-        if (confirm("Are you sure you want to submit your order? This action cannot be undone.")) {
-            loadingIndicator.textContent = "Submitting your order...";
-            loadingIndicator.style.display = 'block';
-            submitOrderButton.disabled = true;
+        // Using a custom message box instead of window.confirm
+        const confirmSubmission = await new Promise(resolve => {
+            showMessageBox("Are you sure you want to submit your order?, () => {
+                resolve(true); // User clicked OK
+            });
+            // For a "Cancel" option, you'd need a more complex custom dialog
+            // with multiple buttons and callbacks.
+        });
 
-            const success = await submitOrder();
-
-            loadingIndicator.style.display = 'none';
-
-            if (success) {
-                showMessageBox("Your order has been submitted successfully! We'll send an email confirmation shortly.", () => {
-                    // Clear session storage related to this order for a fresh start
-                    sessionStorage.removeItem('tacoBellOrderId');
-                    window.location.href = 'index.html'; // Go back to start
-                });
-            } else {
-                // Error message handled by submitOrder
-                submitOrderButton.disabled = false;
-            }
+        if (!confirmSubmission) {
+            return; // User cancelled
         }
+
+        loadingIndicator.textContent = "Submitting your order...";
+        loadingIndicator.style.display = 'block';
+        submitOrderButton.disabled = true;
+        backButton.disabled = true; // Disable navigation buttons during submission
+        startOverButton.disabled = true;
+
+        const success = await submitOrder();
+
+        loadingIndicator.style.display = 'none';
+
+        if (success) {
+            showMessageBox("Your order has been submitted successfully!", () => {
+                // Clear session storage related to this order for a fresh start
+                sessionStorage.removeItem('tacoBellOrderId');
+                window.location.href = 'index.html'; // Go back to start
+            });
+        } else {
+            // Error message handled by submitOrder
+            submitOrderButton.disabled = false;
+            backButton.disabled = false; // Re-enable on failure
+            startOverButton.disabled = false;
+        }
+    });
+
+    // Event listener for the "Back" button
+    backButton.addEventListener('click', () => {
+        console.log("confirm.js: 'Back' button clicked. Navigating to customize.html.");
+        window.location.href = 'customize.html';
+    });
+
+    // Event listener for the "Start Over" button
+    startOverButton.addEventListener('click', () => {
+        sessionStorage.removeItem('tacoBellOrderId');
+        console.log("confirm.js: 'Start Over' button clicked. Session order ID cleared. Navigating to index.html.");
+        window.location.href = 'index.html';
     });
 });
 

@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let unsubscribe = null; // To store the unsubscribe function for the Firestore listener
     let currentFilter = 'all'; // Default filter
 
-    // Common ingredients map for display (should match customize.js and confirm.js)
+    // Common ingredients map for display (should be consistent with customize.js and confirm.js)
     const commonIngredientsMap = {
         'lettuce': 'Lettuce',
         'cheese': 'Cheddar Cheese',
@@ -30,7 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
         'jalapenos': 'Jalapeños',
         'onions': 'Onions',
         'guacamole': 'Guacamole',
-        'pico_de_gallo': 'Pico de Gallo'
+        'pico_de_gallo': 'Pico de Gallo',
+        'beef': 'Seasoned Beef',
+        'chicken': 'Chicken',
+        'steak': 'Steak',
+        'nacho_cheese_sauce': 'Nacho Cheese Sauce',
+        'red_strips': 'Red Strips'
     };
 
     // Function to delete an order from Firestore
@@ -75,15 +80,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const setupFirestoreListener = () => {
         if (unsubscribe) {
             unsubscribe(); // Unsubscribe from previous listener if exists
+            console.log("Dashboard: Unsubscribed from previous Firestore listener.");
         }
 
         if (!currentDb || !currentUserId || !currentAppId) {
-            console.warn("Firestore or User ID not ready for listener setup.");
+            console.warn("Dashboard: Firestore or User ID not ready for listener setup. Skipping listener setup.");
             loadingOrders.textContent = "Please ensure you are authenticated and connected to Firebase.";
             return;
         }
 
         userIdDisplay.textContent = currentUserId; // Display the user ID
+        console.log(`Dashboard: Setting up Firestore listener for user: ${currentUserId}, app: ${currentAppId}, filter: ${currentFilter}`);
 
         const ordersCollectionRef = collection(currentDb, `artifacts/${currentAppId}/users/${currentUserId}/orders`);
         let q;
@@ -102,17 +109,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ordersList.innerHTML = ''; // Clear previous orders
 
         unsubscribe = onSnapshot(q, (snapshot) => {
+            console.log("Dashboard: Received Firestore snapshot. Number of documents:", snapshot.size);
             loadingOrders.style.display = 'none'; // Hide loading once data starts coming
             ordersList.innerHTML = ''; // Clear existing orders before re-rendering
 
             if (snapshot.empty) {
                 ordersList.innerHTML = '<p>No orders found for this filter.</p>';
+                console.log("Dashboard: Snapshot is empty.");
                 return;
             }
 
             snapshot.forEach(doc => {
                 const order = doc.data();
                 const orderId = doc.id;
+                console.log(`Dashboard: Processing order ${orderId}:`, order);
 
                 const orderCard = document.createElement('div');
                 orderCard.className = 'order-card';
@@ -120,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>Order ID: ${orderId} <span>(User: ${order.userId})</span></h3>
                     <button class="delete-button" data-order-id="${orderId}">Delete</button>
                     <p><strong>Customer Name:</strong> ${order.userName || 'N/A'}</p>
-                    <p><strong>Status:</strong> <span class="status ${order.status}">${order.status.replace(/_/g, ' ')}</span></p>
+                    <p><strong>Status:</strong> <span class="status ${order.status}">${order.status ? order.status.replace(/_/g, ' ') : 'N/A'}</span></p>
                     <p><strong>Order Date:</strong> ${order.timestamp ? new Date(order.timestamp.toDate()).toLocaleString() : 'N/A'}</p>
                     <h4>Items:</h4>
                     <ul>
@@ -130,12 +140,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (order.selectedItems && order.selectedItems.length > 0) {
                     order.selectedItems.forEach(item => {
                         const li = document.createElement('li');
-                        let customizationText = '';
-                        if (order.customizations && order.customizations[item.id] && order.customizations[item.id].length > 0) {
-                            const customizedIngredients = order.customizations[item.id].map(ingId => commonIngredientsMap[ingId] || ingId);
-                            customizationText = `<br>&nbsp;&nbsp;&nbsp;Custom: ${customizedIngredients.join(', ')}`;
+                        li.innerHTML = `<strong>${item.name}</strong> (Qty: ${item.quantity || 1})`; // Display quantity
+
+                        // Add customizations if they exist for this item
+                        if (order.customizations && order.customizations[item.id]) {
+                            const itemCustoms = order.customizations[item.id];
+
+                            if (itemCustoms.removed && itemCustoms.removed.length > 0) {
+                                const removedDiv = document.createElement('div');
+                                removedDiv.className = 'customization-details';
+                                const removedNames = itemCustoms.removed.map(id => commonIngredientsMap[id] || id);
+                                removedDiv.innerHTML = `&nbsp;&nbsp;&nbsp;Removed: ${removedNames.join(', ')}`;
+                                li.appendChild(removedDiv);
+                            }
+                            if (itemCustoms.added && itemCustoms.added.length > 0) {
+                                const addedDiv = document.createElement('div');
+                                addedDiv.className = 'customization-details';
+                                const addedNames = itemCustoms.added.map(id => commonIngredientsMap[id] || id);
+                                addedDiv.innerHTML = `&nbsp;&nbsp;&nbsp;Added: ${addedNames.join(', ')}`;
+                                li.appendChild(addedDiv);
+                            }
                         }
-                        li.innerHTML = `<strong>${item.name}</strong> ($${item.price.toFixed(2)})${customizationText}`;
                         itemsList.appendChild(li);
                     });
                 } else {
@@ -145,14 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 orderCard.innerHTML += `</ul>`;
-
-                // Add total
-                let total = 0;
-                if (order.selectedItems) {
-                    total = order.selectedItems.reduce((sum, item) => sum + item.price, 0);
-                }
-                orderCard.innerHTML += `<p><strong>Total: $${total.toFixed(2)}</strong></p>`;
-
                 ordersList.appendChild(orderCard);
 
                 // Add event listener for the delete button
@@ -162,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         }, (error) => {
-            console.error("Error fetching orders:", error);
+            console.error("Dashboard: Error fetching orders:", error);
             loadingOrders.textContent = "Error loading orders. Check console for details.";
             if (error.code === 'permission-denied') {
                 showMessageBox("Permission denied: Check your Firestore Security Rules for read access to orders.");
@@ -186,10 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Dashboard: No user signed in. Waiting for authentication.");
             userIdDisplay.textContent = "Not authenticated";
             loadingOrders.textContent = "Waiting for user authentication...";
-            showMessageBox("Please ensure Firebase is initialized and you are authenticated to view the dashboard.", () => {
-                // Optionally redirect to index.html if not authenticated after a delay
-                // window.location.href = 'index.html';
-            });
+            // showMessageBox("Please ensure Firebase is initialized and you are authenticated to view the dashboard.", () => {
+            //     // Optionally redirect to index.html if not authenticated after a delay
+            //     // window.location.href = 'index.html';
+            // });
         }
     });
 
@@ -218,4 +235,5 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFirestoreListener();
     });
 });
+
 

@@ -3,20 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Your Items - Taco Bell Order</title>
+    <title>Select Your Order - Taco Bell</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for the enhanced menu page */
+        body {
+            /* Background image for the menu page */
+            background-image: url('Images/background.jpg'); /* Placeholder gold background */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top to allow scrolling */
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            color: #333; /* Default text color for contrast on light items */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle text shadow for headings */
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white background */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            max-width: 900px; /* Wider for menu items */
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out forwards;
+            border: 2px solid #e53e3e; /* Taco Bell red border */
+            margin-top: 20px; /* Add some top margin to avoid sticking to top on scroll */
+            margin-bottom: 20px; /* Add some bottom margin */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #e53e3e; /* Taco Bell red */
+            margin-bottom: 15px;
+            font-size: 2.8em; /* Larger heading */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .container > p { /* Targeting the introductory paragraph directly */
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #4a5568;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Larger min-width for items */
+            gap: 25px; /* More space between items */
+            margin-bottom: 30px;
+        }
+
+        .menu-item {
+            background-color: #fff; /* White background for items */
+            border: 1px solid #e2e8f0;
+            border-radius: 12px; /* More rounded corners */
+            padding: 20px;
+            text-align: center;
+            cursor: pointer; /* Cursor indicates clickability */
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+        }
+
+        .menu-item:hover {
+            transform: translateY(-8px); /* More pronounced lift */
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+        }
+
+        .menu-item.selected {
+            border-color: #e53e3e; /* Red border when selected */
+            box-shadow: 0 0 0 4px #e53e3e, 0 12px 25px rgba(0, 0, 0, 0.2); /* Prominent ring effect */
+            background-color: #fff0f0; /* Lighter red tint */
+            transform: translateY(-8px); /* Keep lifted when selected */
+        }
+
+        .menu-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px; /* More space below image */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Image shadow */
+        }
+
+        .menu-item h3 {
+            color: #2d3748;
+            font-size: 1.4em; /* Larger item name */
+            margin-bottom: 8px;
+            font-weight: 700; /* Bolder */
+        }
+
+        .menu-item .description { /* Added for potential item descriptions */
+            color: #718096;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px; /* Space above quantity control */
+            width: 100%; /* Take full width of item card */
+        }
+
+        .quantity-control button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quantity-control button:hover {
+            background-color: #c53030;
+        }
+
+        .quantity-control input[type="number"] {
+            width: 60px; /* Width for quantity input */
+            padding: 5px;
+            margin: 0 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1em;
+            -moz-appearance: textfield; /* Hide Firefox spinner */
+        }
+
+        /* Hide Chrome/Safari number input arrows */
+        .quantity-control input[type="number"]::-webkit-outer-spin-button,
+        .quantity-control input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* More space between buttons */
+            margin-top: 30px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .button {
+            background-color: #e53e3e; /* Taco Bell red */
+            color: white;
+            padding: 15px 30px; /* Larger padding */
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em; /* Consistent font size */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            min-width: 120px; /* Ensure minimum width for buttons */
+        }
+
+        .button:hover {
+            background-color: #c53030;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .button.secondary {
+            background-color: #6b46c1; /* Purple tone for secondary actions */
+        }
+
+        .button.secondary:hover {
+            background-color: #553c9a;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                border-radius: 10px;
+            }
+            h1 {
+                font-size: 2.2em;
+            }
+            .container > p {
+                font-size: 1.1em;
+            }
+            .menu-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjust item size */
+                gap: 15px;
+            }
+            .menu-item {
+                padding: 15px;
+            }
+            .menu-item h3 {
+                font-size: 1.2em;
+            }
+            .quantity-control input[type="number"] {
+                width: 50px;
+            }
+            .button {
+                padding: 12px 25px;
+                font-size: 1.1em;
+                min-width: unset; /* Remove min-width on small screens */
+            }
+            .button-group {
+                flex-direction: column; /* Stack buttons vertically on small screens */
+                gap: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .container > p {
+                font-size: 1em;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr; /* Single column on very small screens */
+            }
+            .menu-item {
+                padding: 12px;
+            }
+            .menu-item h3 {
+                font-size: 1.1em;
+            }
+            .quantity-control input[type="number"] {
+                width: 40px;
+                margin: 0 5px;
+            }
+            .quantity-control button {
+                width: 25px;
+                height: 25px;
+                font-size: 1em;
+            }
+            .button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Choose Your Taco Bell Favorites!</h1>
-        <p>Select up to 6 items from our delicious menu.</p>
-
-        <div id="menuItemsContainer" class="checkbox-group">
+        <h1>Select Your Items</h1>
+        <p>Explore our wide selection of delicious items. Click on any item to add or remove it from your order, and adjust the quantity!</p>
+        <div id="menuItemsContainer" class="menu-grid">
             <!-- Menu items will be dynamically loaded here by menu.js -->
         </div>
-
-        <button id="nextButton" class="button">Next</button>
-        <div id="loadingIndicator" class="loading-indicator">Saving items...</div>
+        <div class="button-group">
+            <button id="backButton" class="button secondary">Back</button>
+            <button id="nextButton" class="button">Next</button>
+            <button id="startOverButton" class="button secondary">Start Over</button>
+        </div>
+        <div id="loadingIndicator" class="loading-indicator">Loading menu...</div>
     </div>
 
     <!-- Custom message box for alerts -->

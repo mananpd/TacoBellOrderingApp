@@ -3,13 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Your Name - Taco Bell Order</title>
+    <title>Enter Your Name - Taco Bell</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for the enhanced name entry page */
+        body {
+            /* Background image for the name page */
+            background-image: url('Images/background.jpg'); /* Placeholder image, slightly different hue */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.75); /* Slightly less transparent dark background */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            max-width: 500px; /* Slightly narrower for focus */
+            width: 100%;
+            box-sizing: border-box;
+            animation: fadeInScale 1s ease-out forwards;
+            border: 2px solid #ffcc00; /* Taco Bell gold/yellow border */
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 2.5em; /* Slightly smaller than index.html h1 */
+            color: #e53e3e; /* Taco Bell red */
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        #userName {
+            width: calc(100% - 40px); /* Adjust for padding */
+            padding: 15px 20px;
+            border: 2px solid #ffcc00; /* Gold border */
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white */
+            color: #ffffff;
+            font-size: 1.2em;
+            outline: none;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+
+        #userName::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        #userName:focus {
+            border-color: #e53e3e; /* Red on focus */
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .button {
+            background-color: #e53e3e; /* Taco Bell red */
+            color: white;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: auto; /* Allow button to size based on content */
+        }
+
+        .button:hover {
+            background-color: #c53030; /* Darker red on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                border-radius: 15px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            p {
+                font-size: 0.95em;
+            }
+            #userName {
+                padding: 12px 15px;
+                font-size: 1em;
+            }
+            .button {
+                padding: 12px 25px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>What's your name?</h1>
-        <input type="text" id="nameInput" class="input-field" placeholder="Enter your name here">
+        <h1>What's Your Name?</h1>
+        <p>Before we begin crafting your delicious order, please tell us your name!</p>
+        <div class="input-group">
+            <input type="text" id="userName" placeholder="Enter your name here..." required>
+        </div>
         <button id="nextButton" class="button">Next</button>
         <div id="loadingIndicator" class="loading-indicator">Saving name...</div>
     </div>
@@ -24,3 +153,4 @@
     <script type="module" src="name.js"></script>
 </body>
 </html>
+

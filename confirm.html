@@ -5,21 +5,205 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm Your Order - Taco Bell</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for the enhanced confirmation page */
+        body {
+            /* Background image for the confirmation page */
+            background-image: url('Images/background.jpg'); /* Placeholder gold/purple background */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top to allow scrolling */
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff; /* White text for better contrast on background */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent dark background */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            max-width: 700px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out forwards;
+            border: 2px solid #ffcc00; /* Taco Bell gold border */
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #e53e3e; /* Taco Bell red */
+            margin-bottom: 15px;
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .container > p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            color: #e2e8f0; /* Lighter text for contrast */
+        }
+
+        .order-summary {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background for summary */
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            color: #2d3748; /* Darker text inside summary for readability */
+        }
+
+        .order-summary h3 {
+            color: #e53e3e;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #cbd5e0;
+            padding-bottom: 10px;
+            font-size: 1.6em;
+            text-align: center;
+        }
+
+        .order-summary p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            color: #4a5568; /* Darker text for paragraphs */
+        }
+
+        .order-summary ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        .order-summary ul li {
+            background-color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 1.1em;
+            color: #2d3748;
+        }
+
+        .order-summary ul li:last-child {
+            border-bottom: none;
+        }
+
+        .customization-details {
+            font-size: 0.9em;
+            color: #718096;
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+
+        .button-group { /* New button group container for navigation */
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between buttons */
+            margin-top: 30px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+        }
+
+        .button {
+            background-color: #e53e3e;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            min-width: 150px;
+        }
+
+        .button:hover {
+            background-color: #c53030;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .button.secondary {
+            background-color: #6b46c1; /* Purple tone for secondary actions */
+        }
+
+        .button.secondary:hover {
+            background-color: #553c9a;
+        }
+
+        .loading-indicator {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #e53e3e;
+            font-weight: bold;
+            text-shadow: none; /* Remove text shadow for loading indicator */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                border-radius: 10px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .order-summary {
+                padding: 15px;
+            }
+            .order-summary p, .order-summary ul li {
+                font-size: 1em;
+            }
+            .button {
+                padding: 12px 25px;
+                font-size: 1.1em;
+                min-width: unset;
+            }
+            .button-group {
+                flex-direction: column; /* Stack buttons vertically on small screens */
+                gap: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Confirm Your Order</h1>
         <p>Please review your order before submitting.</p>
 
-        <div id="orderDetails" class="order-summary"> <!-- Changed ID from orderSummary to orderDetails -->
+        <div id="orderDetails" class="order-summary">
             <h3>Your Order Details</h3>
-            <p><strong>Name:</strong> <span id="orderName"></span></p> <!-- Changed ID from userNameDisplay to orderName -->
+            <p><strong>Name:</strong> <span id="orderName"></span></p>
             <h4>Selected Items:</h4>
             <ul id="selectedItemsList"></ul>
-            <p><strong>Total:</strong> $<span id="orderTotal">0.00</span></p> <!-- Added span for orderTotal -->
         </div>
 
-        <button id="submitOrderButton" class="button">Submit Order</button>
+        <div class="button-group">
+            <button id="backButton" class="button secondary">Back</button>
+            <button id="submitOrderButton" class="button">Submit Order</button>
+            <button id="startOverButton" class="button secondary">Start Over</button>
+        </div>
+        
         <div id="loadingIndicator" class="loading-indicator">Submitting order...</div>
         <div id="confirmationMessage" class="loading-indicator" style="color: green;"></div>
     </div>
@@ -34,4 +218,5 @@
     <script type="module" src="confirm.js"></script>
 </body>
 </html>
+
 

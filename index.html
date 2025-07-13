@@ -3,15 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taco Bell Order</title>
+    <title>Welcome to Taco Bell Ordering!</title>
     <!-- Link to global styles -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for the enhanced index page */
+        body {
+            /* Background image for the landing page */
+            background-image: url('Images/background.jpg'); /* Using your provided image */
+            background-size: cover; /* This is crucial for responsiveness */
+            background-position: center;
+            /* background-attachment: fixed;  Removed for better mobile responsiveness */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif; /* Ensure Inter font is applied */
+            color: #ffffff; /* White text for better contrast on background */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Subtle text shadow */
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background for text readability */
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            box-sizing: border-box;
+            animation: fadeInScale 1s ease-out forwards; /* Fade-in animation */
+            border: 2px solid #e53e3e; /* Taco Bell red border */
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        h1 {
+            font-size: 2.8em; /* Larger heading */
+            color: #ffcc00; /* Taco Bell gold/yellow */
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .taco-icon {
+            font-size: 4em; /* Large emoji icon */
+            margin-bottom: 20px;
+            display: block; /* Ensures it's on its own line */
+            animation: bounce 2s infinite; /* Subtle bounce animation */
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        p {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .button {
+            background-color: #e53e3e; /* Taco Bell red */
+            color: white;
+            padding: 15px 35px; /* Larger padding */
+            border: none;
+            border-radius: 10px; /* More rounded */
+            font-size: 1.4em; /* Larger font */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Button shadow */
+        }
+
+        .button:hover {
+            background-color: #c53030; /* Darker red on hover */
+            transform: translateY(-3px); /* Lift effect */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px;
+                border-radius: 15px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .taco-icon {
+                font-size: 3em;
+            }
+            p {
+                font-size: 1em;
+            }
+            .button {
+                padding: 12px 25px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Taco Bell Ordering!</h1>
-        <p>Click the button below to start your delicious order.</p>
-        <button id="startButton" class="button">Click Here to Start</button>
+        <span class="taco-icon">🌮</span> <!-- Taco emoji icon -->
+        <h1>Get Your Taco Bell Fix!</h1>
+        <p>Ready to make your perfect Taco Bell order?</p>
+        <p>Dive into a world of flavor where every bite is a fiesta!</p>
+        <button id="startButton" class="button">Start Your Order</button>
     </div>
 
     <!-- Custom message box for alerts -->
