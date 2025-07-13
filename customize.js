@@ -18,7 +18,8 @@ const commonIngredients = [
     { id: 'chicken', name: 'Chicken' },    // Added for removal/substitution
     { id: 'steak', name: 'Steak' },        // Added for removal/substitution
     { id: 'nacho_cheese_sauce', name: 'Nacho Cheese Sauce' },
-    { id: 'red_strips', name: 'Red Strips' } // Example for Crunchwrap
+    { id: 'red_strips', name: 'Red Strips' }, // Example for Crunchwrap
+    { id: 'tostada_shell', name: 'Tostada Shell' } // Example for Crunchwrap
 ];
 
 // A simplified mapping of ingredients typically found in items for 'removal' suggestions
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loadingIndicator');
 
     if (!customizationContainer || !nextButton || !backButton || !startOverButton || !loadingIndicator) {
-        console.error("Required elements not found on customize.html.");
+        console.error("Required elements not found on customize.html. Please check HTML IDs.");
         showMessageBox("An error occurred loading the page. Please try again.");
         return;
     }
@@ -69,8 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const orderDetails = await getOrderDetails();
+        console.log("customize.js: Fetched orderDetails:", orderDetails); // Log the fetched order details
 
         if (!orderDetails || !orderDetails.selectedItems || orderDetails.selectedItems.length === 0) {
+            console.warn("customize.js: No items selected for customization found in order details.");
             showMessageBox("No items selected for customization. Please go back to the menu.", () => {
                 window.location.href = 'menu.html';
             });
@@ -83,10 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // currentCustomizations will now store objects like:
         // { [itemId]: { removed: [], added: [] } }
         let currentCustomizations = orderDetails.customizations || {};
+        console.log("customize.js: Initial currentCustomizations:", currentCustomizations); // Log initial customizations
 
         customizationContainer.innerHTML = ''; // Clear previous content
 
         orderDetails.selectedItems.forEach(item => {
+            console.log("customize.js: Processing item for customization:", item); // Log each item being processed
             // Initialize customization structure for this item if not present
             if (!currentCustomizations[item.id]) {
                 currentCustomizations[item.id] = { removed: [], added: [] };
@@ -105,34 +110,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Get default ingredients for this item, or an empty array if not defined
             const defaultIngredients = defaultIngredientsPerItem[item.id] || [];
+            console.log(`customize.js: Item ${item.id} default ingredients:`, defaultIngredients);
 
-            defaultIngredients.forEach(ingredientId => {
-                const ingredient = commonIngredients.find(ing => ing.id === ingredientId);
-                if (!ingredient) return; // Skip if ingredient not found in common list
-
-                const checkboxItem = document.createElement('div');
-                checkboxItem.className = 'checkbox-item';
-                const isChecked = currentCustomizations[item.id].removed.includes(ingredient.id);
-                checkboxItem.innerHTML = `
-                    <input type="checkbox" id="remove-${item.id}-${ingredient.id}" value="${ingredient.id}" ${isChecked ? 'checked' : ''}>
-                    <label for="remove-${item.id}-${ingredient.id}">${ingredient.name}</label>
-                `;
-                removeCheckboxGroup.appendChild(checkboxItem);
-
-                const checkbox = checkboxItem.querySelector(`#remove-${item.id}-${ingredient.id}`);
-                checkbox.addEventListener('change', () => {
-                    if (checkbox.checked) {
-                        if (!currentCustomizations[item.id].removed.includes(ingredient.id)) {
-                            currentCustomizations[item.id].removed.push(ingredient.id);
-                        }
-                    } else {
-                        currentCustomizations[item.id].removed = currentCustomizations[item.id].removed.filter(id => id !== ingredient.id);
-                    }
-                    console.log(`Removed for ${item.name}:`, currentCustomizations[item.id].removed);
-                });
-            });
             if (defaultIngredients.length === 0) {
                 removeCheckboxGroup.innerHTML = '<p style="text-align: center; color: #718096;">No common ingredients to remove for this item.</p>';
+            } else {
+                defaultIngredients.forEach(ingredientId => {
+                    const ingredient = commonIngredients.find(ing => ing.id === ingredientId);
+                    if (!ingredient) {
+                        console.warn(`customize.js: Ingredient ID '${ingredientId}' not found in commonIngredients map.`);
+                        return; // Skip if ingredient not found in common list
+                    }
+
+                    const checkboxItem = document.createElement('div');
+                    checkboxItem.className = 'checkbox-item';
+                    const isChecked = currentCustomizations[item.id].removed.includes(ingredient.id);
+                    checkboxItem.innerHTML = `
+                        <input type="checkbox" id="remove-${item.id}-${ingredient.id}" value="${ingredient.id}" ${isChecked ? 'checked' : ''}>
+                        <label for="remove-${item.id}-${ingredient.id}">${ingredient.name}</label>
+                    `;
+                    removeCheckboxGroup.appendChild(checkboxItem);
+
+                    const checkbox = checkboxItem.querySelector(`#remove-${item.id}-${ingredient.id}`);
+                    checkbox.addEventListener('change', () => {
+                        if (checkbox.checked) {
+                            if (!currentCustomizations[item.id].removed.includes(ingredient.id)) {
+                                currentCustomizations[item.id].removed.push(ingredient.id);
+                            }
+                        } else {
+                            currentCustomizations[item.id].removed = currentCustomizations[item.id].removed.filter(id => id !== ingredient.id);
+                        }
+                        console.log(`customize.js: Removed for ${item.name}:`, currentCustomizations[item.id].removed);
+                    });
+                });
             }
             removeSection.appendChild(removeCheckboxGroup);
             itemDiv.appendChild(removeSection);
@@ -144,10 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const addCheckboxGroup = document.createElement('div');
             addCheckboxGroup.className = 'checkbox-group';
 
+            let ingredientsAddedCount = 0;
             commonIngredients.forEach(ingredient => {
                 // Only show ingredients that are NOT default ingredients for this item to avoid redundancy
                 // and are not already in the 'removed' list for this item.
-                if (!defaultIngredients.includes(ingredient.id) || currentCustomizations[item.id].removed.includes(ingredient.id)) {
+                // This logic might need refinement based on exact "substitution" rules.
+                // For now, it shows all common ingredients that aren't *default* for the item.
+                if (!defaultIngredients.includes(ingredient.id)) { // Only suggest adding ingredients not typically in the item
                     const checkboxItem = document.createElement('div');
                     checkboxItem.className = 'checkbox-item';
                     const isChecked = currentCustomizations[item.id].added.includes(ingredient.id);
@@ -156,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label for="add-${item.id}-${ingredient.id}">${ingredient.name}</label>
                     `;
                     addCheckboxGroup.appendChild(checkboxItem);
+                    ingredientsAddedCount++;
 
                     const checkbox = checkboxItem.querySelector(`#add-${item.id}-${ingredient.id}`);
                     checkbox.addEventListener('change', () => {
@@ -166,11 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             currentCustomizations[item.id].added = currentCustomizations[item.id].added.filter(id => id !== ingredient.id);
                         }
-                        console.log(`Added for ${item.name}:`, currentCustomizations[item.id].added);
+                        console.log(`customize.js: Added for ${item.name}:`, currentCustomizations[item.id].added);
                     });
                 }
             });
-            if (addCheckboxGroup.children.length === 0) {
+            if (ingredientsAddedCount === 0) {
                  addCheckboxGroup.innerHTML = '<p style="text-align: center; color: #718096;">No additional ingredients to add.</p>';
             }
             addSection.appendChild(addCheckboxGroup);

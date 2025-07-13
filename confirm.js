@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loadingIndicator');
 
     if (!orderDetailsContainer || !submitOrderButton || !backButton || !startOverButton || !loadingIndicator) {
-        console.error("Required elements not found on confirm.html.");
+        console.error("Required elements not found on confirm.html. Please check HTML IDs.");
         showMessageBox("An error occurred loading the page. Please try again.");
         return;
     }
@@ -36,8 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const order = await getOrderDetails();
-
-        console.log("confirm.js: Fetched order details:", order);
+        console.log("confirm.js: Fetched order details:", order); // Crucial log for debugging
 
         loadingIndicator.style.display = 'none'; // Hide loading after fetch attempt
 
@@ -71,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'chicken': 'Chicken',
             'steak': 'Steak',
             'nacho_cheese_sauce': 'Nacho Cheese Sauce',
-            'red_strips': 'Red Strips'
+            'red_strips': 'Red Strips',
+            'tostada_shell': 'Tostada Shell' // Ensure this is present if used in customization
         };
 
 
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitOrderButton.addEventListener('click', async () => {
         // Using a custom message box instead of window.confirm
         const confirmSubmission = await new Promise(resolve => {
-            showMessageBox("Are you sure you want to submit your order?, () => {
+            showMessageBox("Are you sure you want to submit your order?", () => {
                 resolve(true); // User clicked OK
             });
             // For a "Cancel" option, you'd need a more complex custom dialog
@@ -180,4 +180,5 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'index.html';
     });
 });
+
 
