@@ -71,12 +71,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`DASHBOARD.JS: Order ${orderIdToDelete} deleted from private collection of user ${orderUserId}.`);
             }
 
+            // If both deletions (or just public if private doesn't exist) succeed, show success message
             showMessageBox(`Order ${orderIdToDelete} deleted successfully!`);
+
         } catch (error) {
             console.error(`DASHBOARD.JS: Error deleting order ${orderIdToDelete}:`, error);
+            // Only show permission denied if the error code explicitly indicates it
             if (error.code === 'permission-denied') {
                 showMessageBox("Permission denied: Check your Firestore Security Rules to allow delete operations for dashboard users.");
             } else {
+                // For any other error, show a generic failure message
                 showMessageBox(`Failed to delete order: ${error.message}`);
             }
         }
@@ -250,4 +254,5 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFirestoreListener();
     });
 });
+
 
